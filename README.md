@@ -1,126 +1,78 @@
-# 🚰 Análise Multivariada Aplicada a Indicadores de Saneamento
+# Multidimensional Analysis of Sanitation Quality in São Paulo (2013–2024)
 
-Projeto acadêmico desenvolvido na disciplina de Análise Multivariada com foco na aplicação de técnicas estatísticas para estudo de indicadores relacionados ao saneamento básico.
+Clustering analysis across all 630 São Paulo municipalities to identify sanitation profiles and priority areas for public policy, using unsupervised machine learning on SNIS public data.
 
-Autor: **Arthur Pereira Gon**
-
----
-
-## 🎯 Objetivo
-
-Investigar a estrutura de dependência entre variáveis associadas ao saneamento básico e identificar padrões estruturais nos dados utilizando técnicas de Análise Multivariada.
-
-O estudo busca:
-
-- Reduzir dimensionalidade
-- Identificar fatores latentes
-- Interpretar relações entre variáveis
-- Avaliar estrutura de correlação
+**Author:** Arthur Gon &nbsp;|&nbsp; **Stack:** Python &nbsp;|&nbsp; **Techniques:** K-Means, DBSCAN, Hierarchical Clustering
 
 ---
 
-## 🗂️ Base de Dados
+## Key Findings
 
-O conjunto de dados contém indicadores relacionados a saneamento, infraestrutura e condições associadas.
-
-As variáveis analisadas incluem indicadores como:
-
-- Abastecimento de água
-- Coleta de esgoto
-- Tratamento de esgoto
-- Indicadores estruturais relacionados
-- Outras variáveis quantitativas associadas ao saneamento
-
-*(Os nomes específicos das variáveis estão no notebook do projeto.)*
+- **549 municipalities** share a homogeneous "São Paulo Standard" profile with balanced sanitation indicators close to the state average
+- **62 municipalities** form a critical cluster with severely low sewage coverage (avg. -2.42 std) - the priority group for infrastructure expansion
+- **13 municipalities** form a high-efficiency niche with very high per capita water consumption and extremely low billing losses (-3.80 std)
+- K-Means (k=8) achieved the best Silhouette Score (0.33), while Hierarchical (k=3) delivered the best Calinski-Harabasz (99.80) for macro-group separation
+- DBSCAN identified **39 outliers** - municipalities like Guarulhos, Águas de São Pedro, and Ilha Comprida with structurally distinct profiles
 
 ---
 
-## 🔎 Metodologia
+## Methodology
 
-A análise foi conduzida nas seguintes etapas:
+Data sourced from SNIS (Sistema Nacional de Informações sobre Saneamento), aggregated across 2013–2022 and normalized per capita for fair comparison across cities.
 
-1. Análise descritiva (médias e desvios padrão)
-2. Construção da matriz de correlação
-3. Verificação da adequação da análise (KMO)
-4. Análise de Componentes Principais (PCA)
-5. Critério de Kaiser (autovalores > 1)
-6. Scree Plot
-7. Interpretação das cargas fatoriais
-8. Análise dos escores fatoriais
-
----
-
-## 📊 Técnicas Estatísticas Utilizadas
-
-- Estatística Descritiva
-- Matriz de Correlação
-- Teste KMO
-- Análise de Componentes Principais (PCA)
-- Rotação Varimax
-- Análise de Escores
+**Pipeline:**
+1. Data loading and preprocessing (SNIS public dataset)
+2. Feature engineering - 18 normalized sanitation metrics per municipality
+3. Optimal k selection via Silhouette Score analysis (k=2 to 10)
+4. K-Means execution with best k
+5. DBSCAN with k-distance plot to define epsilon (eps=4, min_samples=15)
+6. Hierarchical clustering with dendrogram analysis (Ward linkage, k=3)
+7. Algorithm comparison via Silhouette, Calinski-Harabasz, and Davies-Bouldin metrics
 
 ---
 
-## 📈 Principais Resultados
-
-- Identificação de fatores principais explicando a maior parte da variabilidade dos dados.
-- Redução eficiente da dimensionalidade.
-- Identificação de agrupamentos estruturais entre indicadores de saneamento.
-- Interpretação de fatores associados a infraestrutura e cobertura de serviços.
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-O projeto foi desenvolvido em:
-
-- **Python (Google Colab)**
-
-Principais bibliotecas:
+## Stack
 
 ```python
 import pandas as pd
 import numpy as np
+from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
+from sklearn.neighbors import NearestNeighbors
+from scipy.cluster.hierarchy import dendrogram, linkage
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-from factor_analyzer import FactorAnalyzer
 ```
 
 ---
 
-## 📦 Estrutura do Projeto
+## Data
+
+Public dataset from Base dos Dados (SNIS):
+[basedosdados.org/dataset/snis-saneamento](https://basedosdados.org/dataset/2a543ad8-3cdb-4047-9498-efe7fb8ed697?table=df7cf198-4889-4baf-bb77-4e0e28eb90ca)
+
+To reproduce:
+1. Access the link above and go to "Acesso aos dados"
+2. Click "Download" and download the `id_municipio` file
+3. Download the table via "Download da Tabela"
+4. Upload both files and adjust the filename in `analise_saneamento.py`
+
+---
+
+## Project Structure
 
 ```
-├── TRABALHO 2 AM.ipynb
-├── dados_saneamento.csv
-├── Relatorio_Saneamento.pdf
+├── analise_saneamento.py
+├── Saneamento.pdf
 └── README.md
 ```
 
 ---
 
-## 📌 Conclusão
+## Possible Extensions
 
-A aplicação de técnicas multivariadas permitiu:
-
-- Compreender a estrutura interna dos indicadores de saneamento
-- Identificar fatores latentes relevantes
-- Reduzir complexidade sem perda significativa de informação
-- Melhorar a interpretabilidade dos dados
-
----
-
-## 🚀 Possíveis Extensões
-
-- Aplicação de Cluster Analysis
-- Modelos de regressão com escores fatoriais
-- Comparação entre regiões
-- Análise temporal dos indicadores
-
----
-
-## 🏫 Contexto Acadêmico
-
-Projeto desenvolvido na disciplina de Análise Multivariada com foco na aplicação prática de métodos estatísticos em dados reais.
+- Temporal analysis of each cluster across 2013–2024 to detect improvement or degradation trends
+- Geographic mapping of clusters to identify regional patterns
+- Regression model using cluster membership to predict investment needs
+- Replication for other Brazilian states
